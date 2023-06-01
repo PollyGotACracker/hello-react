@@ -47,12 +47,12 @@ _-D : development. devDependencies 에 추가_
 
     - [browsers query 목록](https://github.com/browserslist/browserslist#queries)
     - 지원하고자 하는 브라우저를 설정함으로써 babel 의 작업량을 줄이고 웹 사이트 속도를 향상할 수 있다.
-    - 한국에서 점유율 5% 이상인 브라우저, chrome 의 최신 두 버전
 
     ```js
     ["@babel/preset-env",
           {
         targets: {
+            // 한국에서 점유율 5% 이상인 브라우저, chrome 의 최신 두 버전
               browsers: ["> 5% in KR", "last 2 chrome versions"],
             },
          },
@@ -60,19 +60,67 @@ _-D : development. devDependencies 에 추가_
     ```
 
 - `plugins: []` : bundle 최적화, asset 관리, 환경 변수 주입 등 추가 기능 제공
-
-  ```js
-  plugins: [new webpack.LoaderOptionspPlugin({ debug: true })],
-  ```
-
-  - 각 module(loader) 의 옵션에 `debug: true` 를 적용한다.
-
 - `output: {}` : 빌드 결과물의 파일 경로
 
 ### webpack 빌드
 
 ```shell
 npx webpack
+```
+
+### hot reloading
+
+```shell
+npm i -D react-refresh @pmmmwh/react-refresh-webpack-plugin
+npm i -D webpack-dev-server
+```
+
+- package.json 에 다음 코드 추가
+
+```json
+"scripts": {
+  "dev": "webpack serve --env development",
+}
+```
+
+- webpack.config.js 에 다음 코드 추가
+
+```js
+module: {
+  rules: [
+    {
+      test: /.../,
+      loader: "..."
+      options: {
+        plugins: [
+          "react-refresh/babel",
+        ],
+      },
+    },
+  ],
+},
+plugins: [
+new RefreshWebpackPlugin(),
+],
+output: {
+  // path 는 실제 경로, publicPath 는 가상 경로(webpack 이 빌드한 파일 생성 경로)
+  // app.use("/dist", express.static(__dirname, "dist")) 과 유사
+    publicPath: "/dist",
+},
+devServer: {
+  // devServer 는 output 과 달리 메모리에 파일 생성
+  devMiddleware: { publicPath: "/dist" },
+  // 정적 파일 경로
+  // index.html 이 최상위 폴더에 있지 않다면 path.resolve(__dirname, "폴더명")
+  static: { directory: path.resolve(__dirname) },
+  hot: true,
+},
+```
+
+- devServer 를 통해 소스코드 변경을 감지하여 hot reloading(데이터 유지 가능)
+
+```shell
+npm run dev
 ```
 
 ## 오류
