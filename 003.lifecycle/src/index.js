@@ -1,22 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-// import AppFunc from "./AppFunc";
+import AppFunc from "./AppFunc";
 // import AppClass from "./AppClass";
-// import PureComp from "./render/PureComp";
-// import ShouldCompUpdate from "./render/ShouldCompUpdate";
-import Memo from "./render/Memo";
-
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    {/* <AppFunc /> */}
+    <AppFunc />
     {/* <AppClass /> */}
-    {/* <PureComp /> */}
-    {/* <ShouldCompUpdate /> */}
-    <Memo />
   </React.StrictMode>
 );
 

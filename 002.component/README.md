@@ -37,5 +37,5 @@
 
 ### rendering 최적화
 
-- Class Component: `shouldComponentUpdate()`, `React.PureComponent`
-- Functional Component: `React.memo()`
+`shouldComponentUpdate()`, `React.PureComponent`, `React.memo()`
+_React.memo 는 Higher-Order Components 이므로 컴포넌트를 인자로 받고 return하며, 클래스형과 함수형 컴포넌트에서 모두 사용할 수 있다._
