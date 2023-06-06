@@ -3,6 +3,7 @@
 ## 목표
 
 - 상태 관리
+- 상수 데이터, mock 데이터
 - redux 공부
 
 ## 기억할 것
@@ -22,7 +23,7 @@
 
 - 자식 컴포넌트에서 props 값을 변경해야 할 경우 직접 변경하지 않고 state 를 사용한다.
 
-## JSX 와 조건부 랜더링
+## JSX 와 조건부 렌더링
 
 - 삼항연산자와 함께 false, undefined, null 사용
 - 조건문 뒤에 && 연산자 사용
@@ -35,11 +36,39 @@
 ### Memoization
 
 - 이전에 수행한 연산의 결과값을 저장하여 동일한 입력이 들어올 때 그 값을 재활용하여 중복 연산을 피하는 기법.
-- useCallback 과 useMemo 는 모두 deps 로 지정한 값이 변할 때 실행된다.
-- `useMemo`: memoization 된 return 값을 반환
-- `useCallback`: memoization 된 callback 함수를 반환  
-  자식 컴포넌트에 props 로 함수 전달: 부모 컴포넌트에서 reRendering 이 발생할 때 동일한 함수의 재할당을 막음으로써 불필요한 props 값 변경으로 자식 컴포넌트까지 reRendering 되는 현상을 방지한다.
-  외부 API 호출 시 인수 전달: API 에 넘겨주는 값이 변경될 때만 호출 함수가 재할당되도록 deps 를 작성하고, useEffect 의 deps 에는 해당 함수를 작성한다.
+- useCallback 과 useMemo 는 모두 deps 로 지정한 값이 변할 때 재실행된다. deps 에는 최신 값을 유지해야 하는 요소를 넣는다.
+- `useMemo`: memoization 된 return 값을 기억
+  - 함수 재실행 방지: 함수에 적용하여 컴포넌트가 reRendering(재실행) 될 때 연산량이 많은 함수가 불필요하게 재실행되는 것을 방지
+  - DOM reRendering 방지: Array.map 을 사용하여 여러 node 를 return 할 때 deps 에 배열 요소를 넣어 모든 node 가 불필요하게 한번에 reRendering 되는 현상 방지
+  ```jsx
+  <div>
+    {data.map((v, i) => useMemo(() => <Comp key={i} value={v} />, [v]))}
+  </div>
+  ```
+- `useCallback`: memoization 된 callback 함수를 기억
+  - 자식 컴포넌트에 props 로 함수 전달: 부모 컴포넌트에서 reRendering 이 발생할 때 동일한 함수의 재할당을 막음으로써 불필요한 props 값 변경으로 자식 컴포넌트까지 reRendering 되는 현상을 방지한다.
+  - 외부 API 호출 시 인수 전달: API 에 넘겨주는 값이 변경될 때만 호출 함수가 재할당되도록 deps 를 작성하고, useEffect 의 deps 에는 해당 함수를 작성한다.
+
+### reRendering 원인 분석
+
+```js
+import { useEffect, useRef } from "react";
+
+const Comp = ({ value1, value2, value3 }) => {
+  const ref = useRef([]);
+  useEffect(() => {
+    // 결과가 false 인 요소가 reRendering 원인
+    console.log(
+      value1 === ref.current[0],
+      value2 === ref.current[1],
+      value3 === ref.current[2]
+    );
+    ref.current = [value1, value2, value3];
+  }, [value1, value2, value3]);
+};
+```
+
+- `React.memo` 를 컴포넌트에 적용
 
 ### HTML attributes
 

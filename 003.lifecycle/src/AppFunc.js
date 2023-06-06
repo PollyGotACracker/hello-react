@@ -24,7 +24,6 @@ const AppFunc = () => {
 
   // useEffect(
   //   () => {
-  //     // componentDidMount 및 componentDidUpdate 역할
   //     interval.current = setInterval(increaseNum, 1000);
   //     console.log("mount", number);
 
@@ -34,8 +33,8 @@ const AppFunc = () => {
   //       clearInterval(interval.current);
   //     };
   //   },
-  //   // dependencies 배열이 비어있으면 최초 한번만 실행
-  //   // dependencies 배열 내 변수의 값이 변할 때마다 update
+  //   // dependencies 배열이 비어있으면 최초 한번만 실행 (componentDidMount)
+  //   // dependencies 배열 내 변수의 요소(state, ref) 또는 조건이 있으면 값이 변할 때마다 update (componentDidMount 및 componentDidUpdate)
   //   [number]
   // );
 
