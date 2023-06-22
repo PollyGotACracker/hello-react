@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        border: 5px solid black;
+        padding: 40px;
+      }
+      .container > button {
+        margin-top: 20px;
+        background: white;
+        border: 0;
+        width: 100px;
+        height: 50px;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+    </style>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.2.1/redux.min.js"
+      integrity="sha512-1/8Tj23BRrWnKZXeBruk6wTnsMJbi/lJsk9bsRgVwb6j5q39n0A00gFjbCTaDo5l5XrPVv4DZXftrJExhRF/Ug=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <title>Redux Practice</title>
+  </head>
+  <body>
+    <div id="red"></div>
+    <div id="blue"></div>
+    <div id="green"></div>
+    <script>
+      const colorBox = document.querySelectorAll("body > div");
+      [...colorBox].forEach((box) => {
+        const DIV = document.createElement("DIV");
+        const H1 = document.createElement("H1");
+        const BUTTON = document.createElement("BUTTON");
+        DIV.id = `component-${box.id}`;
+        DIV.className = "container";
+        H1.innerHTML = box.id;
+        BUTTON.innerHTML = "fire";
+        DIV.append(H1, BUTTON);
+        box.append(DIV);
+      });
+
+      const reducer = (state, action) => {
+        // 초기화 단계
+        if (state === undefined) {
+          return { color: "yellow" };
+        }
+        let newState;
+        if (action.type === "CHANGE_COLOR") {
+          // 원본 state 의 복사 값을 변경 후 return
+          newState = Object.assign({}, state, { color: action.color });
+        }
+        console.log(action.type, action, state, newState);
+        return newState;
+      };
+
+      const store = Redux.createStore(
+        reducer,
+        window.__REDUX_DEVTOOLS_EXTENSION__ &&
+          window.__REDUX_DEVTOOLS_EXTENSION__()
+      );
+
+      const setColor = (color) => {
+        const state = store.getState();
+        const container = document.querySelector(`#${color} > .container`);
+        // 값을 일일이 지정하지 않아도 된다.
+        // state.color 가 바뀔 때마다 UI 가 변경된다.
+        container.style.backgroundColor = state.color;
+        container.querySelector("button").onclick = () => {
+          store.dispatch({ type: "CHANGE_COLOR", color: color });
+        };
+      };
+
+      [...colorBox].forEach((box) => {
+        // state 가 바뀔 때마다 render 호출
+        store.subscribe(() => setColor(box.id));
+        setColor(box.id);
+      });
+    </script>
+  </body>
+</html>

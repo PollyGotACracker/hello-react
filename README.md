@@ -6,6 +6,10 @@
 - 상수 데이터, mock 데이터
 - redux 공부
 
+## React Developer Tools
+
+- [chrome extension](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
+
 ## 기억할 것
 
 ### 함수형 setState
