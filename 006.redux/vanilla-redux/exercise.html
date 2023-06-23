@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.2.1/redux.min.js"
+      integrity="sha512-1/8Tj23BRrWnKZXeBruk6wTnsMJbi/lJsk9bsRgVwb6j5q39n0A00gFjbCTaDo5l5XrPVv4DZXftrJExhRF/Ug=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <title>Redux Exercise</title>
+  </head>
+  <body>
+    <div id="subject"></div>
+    <div id="toc"></div>
+    <div id="control"></div>
+    <div id="content"></div>
+
+    <script>
+      const subject = () => {
+        const HEADER = document.createElement("HEADER");
+        const TEXT = document.createTextNode("Hello, WEB!");
+        const H1 = document.createElement("H1");
+        H1.textContent = "WEB";
+        HEADER.append(H1, TEXT);
+        document.querySelector("#subject").append(HEADER);
+      };
+
+      // table of content;목록
+      const TOC = () => {
+        const state = store.getState();
+
+        const NAV = document.createElement("NAV");
+        const OL = document.createElement("OL");
+        const list = [...state.contents].map((ele) => {
+          const LI = document.createElement("LI");
+          const A = document.createElement("A");
+          A.href = `${ele.id}.html`;
+          A.onclick = (e) => {
+            e.preventDefault();
+            store.dispatch({ type: "SELECT", id: ele.id });
+          };
+          A.textContent = ele.title;
+          LI.append(A);
+          return LI;
+        });
+        OL.append(...list);
+        NAV.append(OL);
+        document.querySelector("#toc").textContent = "";
+        document.querySelector("#toc").append(NAV);
+      };
+
+      const control = () => {
+        const UL = document.createElement("UL");
+        const list = ["create", "delete"].map((ele) => {
+          const LI = document.createElement("LI");
+          const A = document.createElement("A");
+          A.textContent = ele;
+          let action = { type: ele.toUpperCase() };
+          if (ele === "create") {
+            A.href = `/${ele}`;
+            action = { type: "CHANGE_MODE", mode: ele };
+          }
+          A.onclick = (e) => {
+            e.preventDefault();
+            store.dispatch(action);
+          };
+          LI.append(A);
+          return LI;
+        });
+        UL.append(...list);
+        document.querySelector("#control").append(UL);
+      };
+
+      const article = () => {
+        const state = store.getState();
+        const container = document.querySelector("#content");
+
+        const createContent = (title, desc) => {
+          const ARTICLE = document.createElement("ARITCLE");
+          const TEXT = document.createTextNode(desc);
+          const H2 = document.createElement("H2");
+          H2.textContent = title;
+          ARTICLE.append(H2, TEXT);
+          container.textContent = "";
+          container.append(ARTICLE);
+        };
+
+        if (state.mode === "create") {
+          const nodes = ["ARTICLE", "FORM", "P", "INPUT", "TEXTAREA", "BUTTON"];
+          const { ARTICLE, FORM, P, INPUT, TEXTAREA, BUTTON } = nodes.reduce(
+            (acc, ele) => {
+              acc[ele] = document.createElement(ele);
+              return acc;
+            },
+            {}
+          );
+          Object.assign(INPUT, {
+            type: "text",
+            name: "title",
+            placeholder: "title",
+          });
+          Object.assign(TEXTAREA, {
+            name: "desc",
+            placeholder: "description",
+          });
+          FORM.onsubmit = (e) => {
+            e.preventDefault();
+            const _title = FORM.title.value;
+            const _desc = FORM.desc.value;
+            store.dispatch({ type: "CREATE", title: _title, desc: _desc });
+          };
+          BUTTON.textContent = "submit";
+          P.append(INPUT, TEXTAREA, BUTTON);
+          FORM.append(P);
+          ARTICLE.append(FORM);
+          container.textContent = "";
+          container.append(ARTICLE);
+        }
+        if (state.mode === "read") {
+          [...state.contents].forEach((ele) => {
+            if (ele.id === state.selected_id) {
+              createContent(ele.title, ele.desc);
+            }
+          });
+        }
+        if (state.mode === "welcome") {
+          createContent("REDUX", "Hello Redux!");
+        }
+      };
+
+      const init = {
+        max_id: 2,
+        mode: "welcome",
+        // dispatch 로 전달받은 id 값 저장용
+        selected_id: 1,
+        contents: [
+          {
+            id: 1,
+            title: "HTML",
+            desc: "HTML is ...",
+          },
+          {
+            id: 2,
+            title: "CSS",
+            desc: "CSS is ...",
+          },
+        ],
+      };
+
+      const reducer = (state, action) => {
+        if (state === undefined) {
+          return init;
+        }
+        switch (action.type) {
+          case "SELECT": {
+            return Object.assign({}, state, {
+              mode: "read",
+              selected_id: action.id,
+            });
+          }
+          case "CREATE": {
+            const newMaxId = state.max_id + 1;
+            const newContents = state.contents.concat({
+              id: newMaxId,
+              title: action.title,
+              desc: action.desc,
+            });
+            return Object.assign({}, state, {
+              max_id: newMaxId,
+              selected_id: newMaxId,
+              contents: newContents,
+              mode: "read",
+            });
+          }
+          case "DELETE": {
+            const newContents = state.contents.filter(
+              (ele) => ele.id !== state.selected_id
+            );
+            return Object.assign({}, state, {
+              contents: newContents,
+              mode: "welcome",
+            });
+          }
+          case "CHANGE_MODE": {
+            return Object.assign({}, state, { mode: action.mode });
+          }
+        }
+      };
+
+      const store = Redux.createStore(reducer);
+      store.subscribe(article);
+      store.subscribe(TOC);
+      subject();
+      TOC();
+      control();
+      article();
+    </script>
+  </body>
+</html>

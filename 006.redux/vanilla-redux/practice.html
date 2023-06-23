@@ -43,8 +43,8 @@
         const BUTTON = document.createElement("BUTTON");
         DIV.id = `component-${box.id}`;
         DIV.className = "container";
-        H1.innerHTML = box.id;
-        BUTTON.innerHTML = "fire";
+        H1.textContent = box.id;
+        BUTTON.textContent = "fire";
         DIV.append(H1, BUTTON);
         box.append(DIV);
       });

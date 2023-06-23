@@ -3,8 +3,9 @@
 ## 목표
 
 - 상태 관리
+- route 관리
 - 상수 데이터, mock 데이터
-- redux 공부
+- JS immutability
 
 ## React Developer Tools
 
