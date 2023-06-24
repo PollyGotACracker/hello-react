@@ -25,6 +25,18 @@ const store = Redux.createStore(
 );
 ```
 
+- React 환경에서 redux-devtools-extension 을 설치하여 코드를 간단히 할 수 있다.
+
+```js
+// React
+// src/index.js
+import { createStore } from "redux";
+import rootReducer from "./modules";
+import { devToolsEnhancer } from "react-devtools-extension";
+
+const store = createStore(rootReducer, devToolsEnhancer());
+```
+
 ## 용어
 
 - action: dispatch 함수에 전달되는 객체 `{ type, payload }`
@@ -39,12 +51,6 @@ const store = Redux.createStore(
   - `reducer = (state, action) => {}`:  
     dispatch 를 통해 action 이 전달되면, 기존 state 값과 dispatch action 값을 참조하여 새로운 state 값을 생성하는 사용자 정의 함수
   - `getState()`: 현재 state 값에 접근
-
-## Redux Middleware
-
-- redux-thunk: action 객체 뿐만 아니라 함수를 dispatch 가능. 비동기 작업 처리
-- redux-saga: action 을 모니터링하여 특정 action 발생 시 특정 작업을 실행.  
-  Generator 를 사용하여 side Effect 처리(요청 취소, 요청 실패 시 재요청 등)
 
 ## Redux vs useReducer + Context API
 

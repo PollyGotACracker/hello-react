@@ -1,70 +1,144 @@
-# Getting Started with Create React App
+# React Redux
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+1. src/components/ 의 presentational 컴포넌트들에서 UI 및 로직 작성
+2. src/modules/ 에 action type 상수, action 생성 함수, state 초기값 및 reducer 함수 정의  
+   이때 action 생성 함수는 export, reducer 함수는 default 로 export 할 것
+3. 같은 폴더에 index.js 를 생성한 뒤, `combineReducers()`(react-redux) 를 사용해 모든 reducer 함수 통합(rootReducer)
+4. root 의 index.js 에서 `createStore()`(redux) 에 rootReducer 를 전달하고 store 생성
+5. 같은 파일에서 `Provider`(react-redux) 컴포넌트로 App 컴포넌트를 감싸고 store 전달
+6. src/containers/ 에 store 와 연결할 Container 컴포넌트 생성 후 store 와 연결
+7. App.js 에서 Container 컴포넌트 import 하여 적용
 
-## Available Scripts
+## API
 
-In the project directory, you can run:
+### `useSelector()`, `useDispatch()`
 
-### `npm start`
+- useSelector: Redux 의 state 조회
+- useDispatch: 컴포넌트 내에서 store 의 dispatch 사용 가능
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```jsx
+import { useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import Item from "../components/myItem";
+import { insert, remove } from "../modules/myModule";
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+const myContainer = () => {
+  // const propA = useSelector((state) => state.propA);
+  const { valueA, valueB } = useSelector(({ propA }) => ({
+    valueA: propA.valueA,
+    valueB: propA.valueB,
+  }));
 
-### `npm test`
+  const dispatch = useDispatch();
+  const onInsert = useCallback((value) => dispatch(insert(value)), [dispatch]);
+  const onRemove = useCallback((id) => dispatch(remove(id)), [dispatch]);
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  return (
+    <Item
+      valueA={valueA}
+      valueB={valueB}
+      onInsert={onInsert}
+      onRemove={onRemove}
+    />
+  );
+};
 
-### `npm run build`
+export default myContainer;
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `useStore()`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- 컴포넌트 내부에서 store 객체를 직접 사용할 수 있다.
+- reducer 교체 등 일반적이지 않은 상황에서 사용된다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```jsx
+import { useStore } from "react-redux";
 
-### `npm run eject`
+const myComp = () => {
+  const store = useStore();
+  store.dispatch({ type: "MY_ACTION" });
+  store.getState();
+};
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+export default myComp;
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `connect()`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- 컨테이너 컴포넌트와 redux 를 연동하는 함수(hooks 로 대체 가능)
+- parameter 에 각각 state 와 action 생성 함수(return 값)를 컴포넌트 props 로 넘겨주는 함수를 전달한다.
+- 두 번째 parameter 는 action 생성 함수로 이루어진 객체를 넣을 수 있다.
+- connect 가 return 한 함수의 parameter(마지막 소괄호) 에 컴포넌트를 전달하면, redux 와 연결된 컴포넌트를 return 한다.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```jsx
+import { connect } from "react-redux";
+// import { bindActionCreators } from "redux";
 
-## Learn More
+const myContainer = ({ valueA, valueB, insert, remove }) => {
+  return (
+    <Item valueA={valueA} valueB={valueB} onInsert={insert} onRemove={remove} />
+  );
+};
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export default connect(
+  (state) => ({ value: state.propA.value }),
+  // (dispatch) =>
+  // 방법 1:
+  // ({
+  // insert: () => dispatch(insert()),
+  // remove: () => dispatch(remove()),
+  // })
+  // 방법 2: bindActionCreators({ insert, remove }, dispatch)
+  {
+    insert,
+    remove,
+  }
+)(myContainer);
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Redux Middlewares
 
-### Code Splitting
+### redux-thunk
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- action 객체 뿐만 아니라 함수를 dispatch 가능. 비동기 작업 처리
 
-### Analyzing the Bundle Size
+### redux-saga
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- action 을 모니터링하여 특정 action 발생 시 특정 작업을 실행.
+- Generator 를 사용하여 side Effect 처리(요청 취소, 요청 실패 시 재요청 등)
 
-### Making a Progressive Web App
+## Libraries
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### redux-actions
 
-### Advanced Configuration
+- action 생성 함수를 간단하게 작성 가능한 라이브러리
+- `createAction()`: action 생성 함수 선언
+- `handleActions()` : reducer 에서 action type 분기 시 switch 문 대신 사용
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```js
+import { createAction, handleActions } from "redux-actions";
 
-### Deployment
+const ACTION_TYPE1 = "DOMAIN/ACTION_TYPE";
+export const actionFunc = createAction(ACTION_TYPE, (value) => value);
+const initalState = { value: 0 };
+const reducer = handleActions(
+  {
+    // 모든 추가 데이터는 action.payload 로 접근할 수 있다.
+    [ACTION_TYPE]: (state, { payload: value }) => ({ ...state, value }),
+  },
+  initalState
+);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+export default reducer;
+```
 
-### `npm run build` fails to minify
+### immer
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- 데이터 객체의 깊이가 깊어져 불변성 유지가 어려울 경우 사용하는 라이브러리
+- `produce(state, draft => {})`: 첫 번째 인수는 불변성을 유지할 값(생략 가능), 두 번째 인수는 값의 상태를 업데이트 하는 함수
+
+```js
+produce(state, (draft) => {
+  draft.value = value;
+});
+```
