@@ -3,21 +3,28 @@
 1. src/components/ 의 presentational 컴포넌트들에서 UI 및 로직 작성
 2. src/modules/ 에 action type 상수, action 생성 함수, state 초기값 및 reducer 함수 정의  
    이때 action 생성 함수는 export, reducer 함수는 default 로 export 할 것
-3. 같은 폴더에 index.js 를 생성한 뒤, `combineReducers()`(react-redux) 를 사용해 모든 reducer 함수 통합(rootReducer)
-4. root 의 index.js 에서 `createStore()`(redux) 에 rootReducer 를 전달하고 store 생성
+3. 같은 폴더에 index.js 를 생성한 뒤, `combineReducers`(react-redux) 를 사용해 모든 reducer 함수 통합(rootReducer)
+4. root 의 index.js 에서 `createStore`(redux) 에 rootReducer 를 전달하고 store 생성
 5. 같은 파일에서 `Provider`(react-redux) 컴포넌트로 App 컴포넌트를 감싸고 store 전달
 6. src/containers/ 에 store 와 연결할 Container 컴포넌트 생성 후 store 와 연결
 7. App.js 에서 Container 컴포넌트 import 하여 적용
 
 ## API
 
-### `useSelector()`, `useDispatch()`
+### `useSelector`, `useDispatch`
 
-- useSelector: Redux 의 state 조회
-- useDispatch: 컴포넌트 내에서 store 의 dispatch 사용 가능
+#### useSelector:
+
+- Redux 의 state 조회
+- `connect` 와 달리, container 컴포넌트의 부모 컴포넌트가 리렌더링될 때 container 컴포넌트의 props 가 바뀌지 않더라도 리렌더링된다.  
+  그러므로 부모 컴포넌트가 리렌더링될 수 있다면 성능 최적화를 위해 React.memo 를 container 컴포넌트에 적용해야 한다.
+
+#### useDispatch:
+
+- 컴포넌트 내에서 store 의 dispatch 사용 가능
 
 ```jsx
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Item from "../components/myItem";
 import { insert, remove } from "../modules/myReducer";
@@ -42,10 +49,10 @@ const myContainer = () => {
   );
 };
 
-export default myContainer;
+export default React.memo(myContainer);
 ```
 
-### `useStore()`
+### `useStore`
 
 - 컴포넌트 내부에서 store 객체를 직접 사용할 수 있다.
 - reducer 교체 등 일반적이지 않은 상황에서 사용된다.
@@ -62,9 +69,10 @@ const myComp = () => {
 export default myComp;
 ```
 
-### `connect()`
+### `connect`
 
 - 컨테이너 컴포넌트와 redux 를 연동하는 함수(hooks 로 대체 가능)
+- `useSelecor` 와 달리, container 컴포넌트의 부모 컴포넌트가 리렌더링될 때 container 컴포넌트의 props 가 바뀌지 않았다면 리렌더링이 방지된다.
 - parameter 에 각각 state 와 action 생성 함수(return 값)를 컴포넌트 props 로 넘겨주는 함수를 전달한다.
 - 두 번째 parameter 는 action 생성 함수로 이루어진 객체를 넣을 수 있다.
 - connect 가 return 한 함수의 parameter(마지막 소괄호) 에 컴포넌트를 전달하면, redux 와 연결된 컴포넌트를 return 한다.

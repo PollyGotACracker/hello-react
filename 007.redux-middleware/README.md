@@ -145,7 +145,7 @@ function* myWatcher() {
 
 const watch = myWatcher();
 watch.next();
-// watcher executed!
+// myWatcher executed!
 // {value: undefined, done: false}
 watch.next({ type: "SOMETHING" });
 // before: null
