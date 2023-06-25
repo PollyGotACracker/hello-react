@@ -14,8 +14,7 @@ const SampleContainer = ({
   useEffect(() => {
     const fn = async () => {
       try {
-        // get... 변수를 통해 createRequestThunk 호출
-        // api.get... 함수에 인수 전달
+        // return 되는 함수에 인수 전달
         await getPost(1);
         await getUsers();
       } catch (e) {

@@ -38,7 +38,7 @@ const store = createStore(rootReducer, applyMiddleware(logger, thunk));
 - 소규모의 프로젝트에 적용
 - action 생성 함수에서 action 객체 대신 함수를 반환
 
-### thunk 함수
+#### thunk 함수
 
 - 특정 작업을 지연하기 위하여 함수로 감싼 것
 - 로직을 분리하여 별도의 파일에 작성할 경우 src/lib 에 위치
