@@ -10,11 +10,11 @@ export const decrease = () => ({
   type: DECREASE,
 });
 
-const inital = {
+const initial = {
   number: 0,
 };
 
-const counter = (state = inital, action) => {
+const counter = (state = initial, action) => {
   switch (action.type) {
     case INCREASE:
       return { number: state.number + 1 };

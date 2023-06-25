@@ -20,7 +20,7 @@ export const toggle = createAction(TOGGLE, (id) => id);
 
 export const remove = createAction(REMOVE, (id) => id);
 
-const inital = {
+const initial = {
   input: "",
   todos: [
     { id: 1, text: "redux 기초 배우기", done: true },
@@ -65,7 +65,7 @@ const todos = handleActions(
     //   todos: state.todos.fliter((todo) => todo.id !== id),
     // })
   },
-  inital
+  initial
 );
 
 export default todos;

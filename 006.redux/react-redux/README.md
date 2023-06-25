@@ -20,13 +20,12 @@
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Item from "../components/myItem";
-import { insert, remove } from "../modules/myModule";
+import { insert, remove } from "../modules/myReducer";
 
 const myContainer = () => {
-  // const propA = useSelector((state) => state.propA);
-  const { valueA, valueB } = useSelector(({ propA }) => ({
-    valueA: propA.valueA,
-    valueB: propA.valueB,
+  const { valueA, valueB } = useSelector(({ myReducer }) => ({
+    valueA: myReducer.valueA,
+    valueB: myReducer.valueB,
   }));
 
   const dispatch = useDispatch();
@@ -80,8 +79,9 @@ const myContainer = ({ valueA, valueB, insert, remove }) => {
   );
 };
 
+// (state) 를 destructuring 하여 ({ myReducer }) 로 작성 가능
 export default connect(
-  (state) => ({ value: state.propA.value }),
+  (state) => ({ value: state.myReducer.value }),
   // (dispatch) =>
   // 방법 1:
   // ({
@@ -120,13 +120,13 @@ import { createAction, handleActions } from "redux-actions";
 
 const ACTION_TYPE1 = "DOMAIN/ACTION_TYPE";
 export const actionFunc = createAction(ACTION_TYPE, (value) => value);
-const initalState = { value: 0 };
+const initialState = { value: 0 };
 const reducer = handleActions(
   {
     // 모든 추가 데이터는 action.payload 로 접근할 수 있다.
     [ACTION_TYPE]: (state, { payload: value }) => ({ ...state, value }),
   },
-  initalState
+  initialState
 );
 
 export default reducer;

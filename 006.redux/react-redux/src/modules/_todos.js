@@ -28,7 +28,7 @@ export const remove = (id) => ({
   id,
 });
 
-const inital = {
+const initial = {
   input: "",
   todos: [
     { id: 1, text: "redux 기초 배우기", done: true },
@@ -36,7 +36,7 @@ const inital = {
   ],
 };
 
-const todos = (state = inital, action) => {
+const todos = (state = initial, action) => {
   switch (action.type) {
     case CHANGE_INPUT:
       return {
