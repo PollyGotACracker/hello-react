@@ -7,6 +7,12 @@
 - 상수 데이터, mock 데이터
 - JS immutability
 
+## 학습한 강의 및 교재
+
+- 조현영, 웹 게임을 만들며 배우는 React
+- Egoing Lee, 생활코딩 - Redux
+- 김민준(VELOPERT), 리액트를 다루는 기술 개정판
+
 ## React Developer Tools
 
 - [chrome extension](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
