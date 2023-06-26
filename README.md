@@ -7,10 +7,10 @@
 - 상수 데이터, mock 데이터
 - JS immutability
 
-## 학습한 강의 및 교재
+## 학습
 
-- 조현영, 웹 게임을 만들며 배우는 React
-- Egoing Lee, 생활코딩 - Redux
+- [조현영, 웹 게임을 만들며 배우는 React](https://www.inflearn.com/course/web-game-react)
+- [Egoing Lee, 생활코딩 - Redux](https://www.inflearn.com/course/redux-%EC%83%9D%ED%99%9C%EC%BD%94%EB%94%A9)
 - 김민준(VELOPERT), 리액트를 다루는 기술 개정판
 
 ## React Developer Tools
